@@ -12,6 +12,8 @@ function App() {
   const [piName, setPiName] = useState('')
   const [fiscalYear, setFiscalYear] = useState(String(DEFAULT_FISCAL_YEAR))
   const [projectNumber, setProjectNumber] = useState('')
+  const [activityCode, setActivityCode] = useState('')
+  const [fundingMechanism, setFundingMechanism] = useState('')
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -28,7 +30,7 @@ function App() {
     setAlertBadge(alerts.filter(a => a.enabled).length)
   }, [tab])
 
-  const currentCriteria = { organization, pi: piName, fiscalYear, projectNumber }
+  const currentCriteria = { organization, pi: piName, fiscalYear, projectNumber, activityCode, fundingMechanism }
 
   const doSearch = useCallback(async (newOffset = 0) => {
     setLoading(true)
@@ -40,6 +42,8 @@ function App() {
         pi: piName || undefined,
         fiscalYear: fiscalYear || undefined,
         projectNumber: projectNumber || undefined,
+        activityCode: activityCode || undefined,
+        fundingMechanism: fundingMechanism || undefined,
         offset: newOffset,
         limit: 25,
       })
@@ -65,7 +69,7 @@ function App() {
     } finally {
       setLoading(false)
     }
-  }, [organization, piName, fiscalYear, projectNumber])
+  }, [organization, piName, fiscalYear, projectNumber, activityCode, fundingMechanism])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -78,12 +82,47 @@ function App() {
     setPiName(criteria.pi || '')
     setFiscalYear(criteria.fiscalYear || String(DEFAULT_FISCAL_YEAR))
     setProjectNumber(criteria.projectNumber || '')
+    setActivityCode(criteria.activityCode || '')
+    setFundingMechanism(criteria.fundingMechanism || '')
     setResults([])
     setHasSearched(false)
     setTab('search')
   }
 
   const totalAmount = results.reduce((sum, r) => sum + (r.awardAmount || 0), 0)
+
+  const ACTIVITY_CODES = [
+    { value: '', label: 'All' },
+    { value: 'R01', label: 'R01 — Research Grant' },
+    { value: 'R21', label: 'R21 — Exploratory/Developmental' },
+    { value: 'R03', label: 'R03 — Small Research Grant' },
+    { value: 'R15', label: 'R15 — AREA Grant' },
+    { value: 'R35', label: 'R35 — MIRA' },
+    { value: 'R56', label: 'R56 — High Priority Grant' },
+    { value: 'U01', label: 'U01 — Cooperative Agreement' },
+    { value: 'U54', label: 'U54 — Specialized Center' },
+    { value: 'P01', label: 'P01 — Program Project' },
+    { value: 'P30', label: 'P30 — Center Core Grant' },
+    { value: 'P50', label: 'P50 — Specialized Center' },
+    { value: 'T32', label: 'T32 — Institutional Training' },
+    { value: 'T35', label: 'T35 — Short-Term Training' },
+    { value: 'F31', label: 'F31 — Predoctoral Fellowship' },
+    { value: 'F32', label: 'F32 — Postdoctoral Fellowship' },
+    { value: 'K01', label: 'K01 — Mentored Research Award' },
+    { value: 'K08', label: 'K08 — Clinical Investigator' },
+    { value: 'K23', label: 'K23 — Patient-Oriented Research' },
+    { value: 'K99', label: 'K99 — Pathway to Independence' },
+  ]
+
+  const FUNDING_MECHANISMS = [
+    { value: '', label: 'All' },
+    { value: 'Research Grant', label: 'Research Grant' },
+    { value: 'Contract', label: 'Contract' },
+    { value: 'Cooperative Agreement', label: 'Cooperative Agreement' },
+    { value: 'Training Grant', label: 'Training Grant' },
+    { value: 'Fellowship', label: 'Fellowship' },
+    { value: 'Career Development', label: 'Career Development' },
+  ]
 
   const currentYear = new Date().getFullYear()
   const years = Array.from({ length: 11 }, (_, i) => currentYear + 1 - i)
@@ -165,16 +204,40 @@ function App() {
                   onChange={(e) => setProjectNumber(e.target.value)}
                 />
               </div>
+              <div className="field">
+                <label htmlFor="activity">Activity Code</label>
+                <select
+                  id="activity"
+                  value={activityCode}
+                  onChange={(e) => setActivityCode(e.target.value)}
+                >
+                  {ACTIVITY_CODES.map(ac => (
+                    <option key={ac.value} value={ac.value}>{ac.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="field">
+                <label htmlFor="mechanism">Funding Mechanism</label>
+                <select
+                  id="mechanism"
+                  value={fundingMechanism}
+                  onChange={(e) => setFundingMechanism(e.target.value)}
+                >
+                  {FUNDING_MECHANISMS.map(fm => (
+                    <option key={fm.value} value={fm.value}>{fm.label}</option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div className="search-actions">
               <button type="submit" className="btn-primary" disabled={loading}>
                 {loading ? 'Searching…' : '🔍 Search Awards'}
               </button>
-              {(organization || piName || fiscalYear || projectNumber) && (
+              {(organization || piName || fiscalYear || projectNumber || activityCode || fundingMechanism) && (
                 <button
                   type="button"
                   className="btn-secondary"
-                  onClick={() => { setOrganization(''); setPiName(''); setFiscalYear(String(DEFAULT_FISCAL_YEAR)); setProjectNumber('') }}
+                  onClick={() => { setOrganization(''); setPiName(''); setFiscalYear(String(DEFAULT_FISCAL_YEAR)); setProjectNumber(''); setActivityCode(''); setFundingMechanism('') }}
                 >
                   Clear
                 </button>

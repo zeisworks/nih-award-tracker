@@ -12,6 +12,40 @@ export default function AlertsPanel({ searchCriteria, onNavigate }) {
   const [form, setForm] = useState(emptyForm())
   const [expandedId, setExpandedId] = useState(null)
 
+  // Common activity codes from NIH RePORTER
+  const ACTIVITY_CODES = [
+    { value: '', label: 'All' },
+    { value: 'R01', label: 'R01 — Research Grant' },
+    { value: 'R21', label: 'R21 — Exploratory/Developmental' },
+    { value: 'R03', label: 'R03 — Small Research Grant' },
+    { value: 'R15', label: 'R15 — AREA Grant' },
+    { value: 'R35', label: 'R35 — MIRA' },
+    { value: 'R56', label: 'R56 — High Priority Grant' },
+    { value: 'U01', label: 'U01 — Cooperative Agreement' },
+    { value: 'U54', label: 'U54 — Specialized Center' },
+    { value: 'P01', label: 'P01 — Program Project' },
+    { value: 'P30', label: 'P30 — Center Core Grant' },
+    { value: 'P50', label: 'P50 — Specialized Center' },
+    { value: 'T32', label: 'T32 — Institutional Training' },
+    { value: 'T35', label: 'T35 — Short-Term Training' },
+    { value: 'F31', label: 'F31 — Predoctoral Fellowship' },
+    { value: 'F32', label: 'F32 — Postdoctoral Fellowship' },
+    { value: 'K01', label: 'K01 — Mentored Research Award' },
+    { value: 'K08', label: 'K08 — Clinical Investigator' },
+    { value: 'K23', label: 'K23 — Patient-Oriented Research' },
+    { value: 'K99', label: 'K99 — Pathway to Independence' },
+  ]
+
+  const FUNDING_MECHANISMS = [
+    { value: '', label: 'All' },
+    { value: 'Research Grant', label: 'Research Grant' },
+    { value: 'Contract', label: 'Contract' },
+    { value: 'Cooperative Agreement', label: 'Cooperative Agreement' },
+    { value: 'Training Grant', label: 'Training Grant' },
+    { value: 'Fellowship', label: 'Fellowship' },
+    { value: 'Career Development', label: 'Career Development' },
+  ]
+
   function emptyForm() {
     return {
       name: '',
@@ -19,6 +53,8 @@ export default function AlertsPanel({ searchCriteria, onNavigate }) {
       pi: searchCriteria?.pi || '',
       fiscalYear: searchCriteria?.fiscalYear || '',
       projectNumber: searchCriteria?.projectNumber || '',
+      activityCode: searchCriteria?.activityCode || '',
+      fundingMechanism: searchCriteria?.fundingMechanism || '',
       notifyEmail: '',
       frequency: 'daily',
     }
@@ -39,6 +75,8 @@ export default function AlertsPanel({ searchCriteria, onNavigate }) {
           pi: form.pi,
           fiscalYear: form.fiscalYear,
           projectNumber: form.projectNumber,
+          activityCode: form.activityCode,
+          fundingMechanism: form.fundingMechanism,
         },
         notifyEmail: form.notifyEmail,
         frequency: form.frequency,
@@ -50,6 +88,8 @@ export default function AlertsPanel({ searchCriteria, onNavigate }) {
         pi: form.pi || undefined,
         fiscalYear: form.fiscalYear || undefined,
         projectNumber: form.projectNumber || undefined,
+        activityCode: form.activityCode || undefined,
+        fundingMechanism: form.fundingMechanism || undefined,
         notifyEmail: form.notifyEmail || undefined,
         frequency: form.frequency,
       })
@@ -68,6 +108,8 @@ export default function AlertsPanel({ searchCriteria, onNavigate }) {
       pi: alert.criteria.pi || '',
       fiscalYear: alert.criteria.fiscalYear || '',
       projectNumber: alert.criteria.projectNumber || '',
+      activityCode: alert.criteria.activityCode || '',
+      fundingMechanism: alert.criteria.fundingMechanism || '',
       notifyEmail: alert.notifyEmail || '',
       frequency: alert.frequency || 'daily',
     })
@@ -93,6 +135,8 @@ export default function AlertsPanel({ searchCriteria, onNavigate }) {
       pi: searchCriteria?.pi || '',
       fiscalYear: searchCriteria?.fiscalYear || '',
       projectNumber: searchCriteria?.projectNumber || '',
+      activityCode: searchCriteria?.activityCode || '',
+      fundingMechanism: searchCriteria?.fundingMechanism || '',
       notifyEmail: '',
       frequency: 'daily',
     })
@@ -169,6 +213,33 @@ export default function AlertsPanel({ searchCriteria, onNavigate }) {
                 value={form.projectNumber}
                 onChange={e => setForm({ ...form, projectNumber: e.target.value })}
               />
+            </div>
+          </div>
+
+          <div className="alert-form-grid">
+            <div className="field">
+              <label htmlFor="alert-activity">Activity Code</label>
+              <select
+                id="alert-activity"
+                value={form.activityCode}
+                onChange={e => setForm({ ...form, activityCode: e.target.value })}
+              >
+                {ACTIVITY_CODES.map(ac => (
+                  <option key={ac.value} value={ac.value}>{ac.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="alert-mechanism">Funding Mechanism</label>
+              <select
+                id="alert-mechanism"
+                value={form.fundingMechanism}
+                onChange={e => setForm({ ...form, fundingMechanism: e.target.value })}
+              >
+                {FUNDING_MECHANISMS.map(fm => (
+                  <option key={fm.value} value={fm.value}>{fm.label}</option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -299,5 +370,5 @@ export default function AlertsPanel({ searchCriteria, onNavigate }) {
 
 function hasCriteria(alert) {
   const c = alert.criteria
-  return c.organization || c.pi || c.fiscalYear || c.projectNumber
+  return c.organization || c.pi || c.fiscalYear || c.projectNumber || c.activityCode || c.fundingMechanism
 }

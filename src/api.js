@@ -10,6 +10,8 @@ const BASE = 'https://api.reporter.nih.gov/v2'
  * @param {string} [params.pi] - PI last name
  * @param {string} [params.fiscalYear] - e.g. "2024"
  * @param {string} [params.projectNumber] - e.g. "R01GM12345"
+ * @param {string} [params.activityCode] - e.g. "R01", "R21", "T32", "F31"
+ * @param {string} [params.fundingMechanism] - e.g. "Research Grant", "Contract"
  * @param {number} [params.offset=0]
  * @param {number} [params.limit=25] - max 500
  */
@@ -18,6 +20,8 @@ export async function searchAwards({
   pi,
   fiscalYear,
   projectNumber,
+  activityCode,
+  fundingMechanism,
   offset = 0,
   limit = 25,
 } = {}) {
@@ -27,6 +31,8 @@ export async function searchAwards({
   if (pi) criteria.piNames = [{lastName: pi}]
   if (fiscalYear) criteria.fiscalYear = parseInt(fiscalYear)
   if (projectNumber) criteria.projectNumber = projectNumber
+  if (activityCode) criteria.activityCode = activityCode
+  if (fundingMechanism) criteria.fundingMechanism = fundingMechanism
 
   const body = {
     criteria,

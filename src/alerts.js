@@ -62,7 +62,7 @@ export function getAlert(id) {
  * @param {string} [params.notifyEmail] - optional email for delivery
  * @param {'immediate'|'daily'|'weekly'} [params.frequency='daily']
  */
-export function createAlert({ name, organization, pi, fiscalYear, projectNumber, notifyEmail, frequency = 'daily' }) {
+export function createAlert({ name, organization, pi, fiscalYear, projectNumber, activityCode, fundingMechanism, notifyEmail, frequency = 'daily' }) {
   const alerts = load()
   const alert = {
     id: uid(),
@@ -72,6 +72,8 @@ export function createAlert({ name, organization, pi, fiscalYear, projectNumber,
       pi: pi || '',
       fiscalYear: fiscalYear || '',
       projectNumber: projectNumber || '',
+      activityCode: activityCode || '',
+      fundingMechanism: fundingMechanism || '',
     },
     notifyEmail: notifyEmail || '',
     frequency,
@@ -162,5 +164,7 @@ export function criteriaSummary(criteria) {
   if (criteria.pi) parts.push(`PI: ${criteria.pi}`)
   if (criteria.fiscalYear) parts.push(`FY: ${criteria.fiscalYear}`)
   if (criteria.projectNumber) parts.push(`Project: ${criteria.projectNumber}`)
+  if (criteria.activityCode) parts.push(`Activity: ${criteria.activityCode}`)
+  if (criteria.fundingMechanism) parts.push(`Mechanism: ${criteria.fundingMechanism}`)
   return parts.length > 0 ? parts.join(' · ') : '(no criteria)'
 }
